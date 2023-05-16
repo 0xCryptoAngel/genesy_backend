@@ -78,7 +78,7 @@ export class NftService {
         .lean()
         .exec(),
       this.profileModel
-        .find({})
+        .find({ artist: true })
         .sort({ totalVolume: -1 })
         .limit(8)
         .lean()
