@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { UpdateNftDto } from './nft.dto';
 import { NftService } from './nft.service';
@@ -44,8 +44,9 @@ export class NftController {
     @Param('order') order: string,
     @Param('page') page: number,
     @Param('pageSize') pageSize: number,
+    @Query('address') address: string,
   ) {
-    return await this.service.getPrimaryItems(order, page, pageSize);
+    return await this.service.getPrimaryItems(order, page, pageSize, address);
   }
 
   @Get('peers/:artist/:wallet')

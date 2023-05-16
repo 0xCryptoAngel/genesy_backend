@@ -91,31 +91,49 @@ export class NftService {
     };
   }
 
-  async getPrimaryItems(order: string, page: number, pageSize: number) {
+  async getPrimaryItems(
+    order: string,
+    page: number,
+    pageSize: number,
+    address: string,
+  ) {
     const sort: any = {
       mintedAt: -1,
     };
-    if (order === '1') sort.curated = 1;
-    console.log('sort', sort, order);
-    if (order === '1')
+    if (order == '1') {
+      if (address) {
+        const result = await this.profileModel.findOne({
+          wallet: address,
+        });
+        return await this.nftModel
+          .find({
+            artist: { $in: result.friends },
+            $expr: { $eq: ['$artist', '$owner'] },
+            price: { $gt: 0 },
+          })
+          .sort(sort)
+          .skip(page * pageSize)
+          .limit(pageSize)
+          .lean()
+          .exec();
+      } else {
+        return await this.nftModel
+          .find({ $expr: { $eq: ['$artist', '$owner'] }, price: { $gt: 0 } })
+          .sort(sort)
+          .skip(page * pageSize)
+          .limit(pageSize)
+          .lean()
+          .exec();
+      }
+    } else {
       return await this.nftModel
-        .find({
-          $expr: { $eq: ['$artist', '$owner'] },
-          price: { $gt: 0 },
-          curated: true,
-        })
+        .find({ $expr: { $eq: ['$artist', '$owner'] }, price: { $gt: 0 } })
         .sort(sort)
         .skip(page * pageSize)
         .limit(pageSize)
         .lean()
         .exec();
-    return await this.nftModel
-      .find({ $expr: { $eq: ['$artist', '$owner'] }, price: { $gt: 0 } })
-      .sort(sort)
-      .skip(page * pageSize)
-      .limit(pageSize)
-      .lean()
-      .exec();
+    }
     // await this.nftModel.find({}).lean().exec();
   }
 
