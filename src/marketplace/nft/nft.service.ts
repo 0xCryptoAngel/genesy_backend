@@ -112,6 +112,10 @@ export class NftService {
           })
           .distinct('artist')
           .exec();
+        console.log('_test', _test);
+        const indexOf = _test.indexOf(address);
+        if (indexOf >= 0) _test.splice(indexOf, 1);
+        console.log('curatedArtist', _test);
         return await this.nftModel
           .find({
             artist: { $in: _test },
