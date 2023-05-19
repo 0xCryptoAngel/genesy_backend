@@ -105,20 +105,17 @@ export class NftService {
         const result = await this.profileModel.findOne({
           wallet: address,
         });
-
-        const _test = await this.nftModel
+        const curatedAddress = await this.nftModel
           .find({
             owner: { $in: result.friends },
           })
           .distinct('artist')
           .exec();
-        console.log('_test', _test);
-        const indexOf = _test.indexOf(address);
-        if (indexOf >= 0) _test.splice(indexOf, 1);
-        console.log('curatedArtist', _test);
+        const indexOf = curatedAddress.indexOf(address);
+        if (indexOf >= 0) curatedAddress.splice(indexOf, 1);
         return await this.nftModel
           .find({
-            artist: { $in: _test },
+            artist: { $in: curatedAddress },
             $expr: { $eq: ['$artist', '$owner'] },
             price: { $gt: 0 },
           })
