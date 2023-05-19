@@ -105,9 +105,16 @@ export class NftService {
         const result = await this.profileModel.findOne({
           wallet: address,
         });
+
+        const _test = await this.nftModel
+          .find({
+            owner: { $in: result.friends },
+          })
+          .distinct('artist')
+          .exec();
         return await this.nftModel
           .find({
-            artist: { $in: result.friends },
+            artist: { $in: _test },
             $expr: { $eq: ['$artist', '$owner'] },
             price: { $gt: 0 },
           })
