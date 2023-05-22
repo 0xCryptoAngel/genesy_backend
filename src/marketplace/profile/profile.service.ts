@@ -36,6 +36,7 @@ export class ProfileService {
     if (indexOf >= 0) profile.friends.splice(indexOf, 1);
     else profile.friends.push(friend);
     await profile.save();
+    return profile;
   }
 
   async toggleVerified(wallet: string) {
